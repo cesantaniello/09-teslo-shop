@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "backend": "npm --prefix ../10-nest-teslo-shop-backend run start:dev",
+    "dev": "concurrently -n BE,FE -c blue,green \"yarn backend\" \"ng serve\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -27,6 +29,7 @@
     "@angular/build": "^21.2.5",
     "@angular/cli": "^21.2.5",
     "@angular/compiler-cli": "^21.2.0",
+    "concurrently": "^10.0.3",
     "daisyui": "^5.5.23",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",

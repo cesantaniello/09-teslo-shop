@@ -19,8 +19,10 @@ export class ProductsService {
   getProducts(options: Options): Observable<ProductsResponse>{
     const { limit = 9, offset = 0, gender = ''} = options;
 
-    return this.http.get<ProductsResponse>(`${baseUrl}/products`,{
-      params: {limit, offset, gender,}}).pipe(tap((resp) => console.log(resp)));
+    const params: Record<string, string | number> = { limit, offset };
+    if (gender) params['gender'] = gender;
+
+    return this.http.get<ProductsResponse>(`${baseUrl}/products`, { params }).pipe(tap((resp) => console.log(resp)));
   }
 
 }

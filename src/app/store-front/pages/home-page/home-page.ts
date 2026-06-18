@@ -12,9 +12,6 @@ export class HomePage {
   productsService = inject(ProductsService);
 
   productsResource = rxResource({
-    params: () => ({}),
-    stream: () => {
-      return this.productsService.getProducts({limit: 1, gender: 'kid'});
-    },
+    stream: () => this.productsService.getProducts({ limit: 20 }),
   });
 }
