@@ -1,10 +1,9 @@
 import { Component, inject, resource } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { ProductCard } from '../../components/product-card/product-card';
 import { ProductsService } from '../../../products/services/products.service';
 import { Pagination } from '../../../shared/components/pagination/pagination/pagination';
-import { ActivatedRoute } from '@angular/router';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
+import { PaginationService } from '../../../shared/components/pagination/pagination/pagination.service';
 
 @Component({
   selector: 'app-home-page',
@@ -13,7 +12,8 @@ import { firstValueFrom, map } from 'rxjs';
 })
 export class HomePage {
   productsService = inject(ProductsService);
-
+  paginationService = inject(PaginationService);
+/*
   activatedRoute = inject(ActivatedRoute);
 
   currentPage = toSignal(
@@ -23,9 +23,9 @@ export class HomePage {
     ),
     { initialValue: 1 },
   );
-
+*/
   productsResource = resource({
-    params: () => ({ page: this.currentPage() }),
+    params: () => ({ page: this.paginationService.currentPage() }),
     loader: ({ params }) =>
       firstValueFrom(
         this.productsService.getProducts({

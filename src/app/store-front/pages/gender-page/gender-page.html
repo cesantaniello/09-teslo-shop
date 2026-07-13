@@ -8,5 +8,6 @@
     <product-card [product]="product" />
     }
   @empty {<p>No hay productos</p>}
-  </div>
+</div>
 
+<app-pagination [pages]="productsResource.value()?.pages ?? 0" [currentPage]="paginationService.currentPage()" />
