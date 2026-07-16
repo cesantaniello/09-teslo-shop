@@ -31,8 +31,16 @@ export class LoginPage {
 
     const { email, password } = this.loginForm.value;
 
-    this.authService.login(email!, password!).subscribe( resp => {
-      console.log(resp);
-    })
+    this.authService.login(email!, password!).subscribe({
+      next: () => {
+        console.log(this.authService.token());
+      },
+      error: () => {
+        this.hasError.set(true);
+        setTimeout(() => {
+          this.hasError.set(false);
+        }, 3000);
+      },
+    });
   }
 }
