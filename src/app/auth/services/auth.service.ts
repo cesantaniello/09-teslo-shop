@@ -34,25 +34,19 @@ export class AuthService {
 
   login(email: string, password: string):Observable<boolean> {
     return this.http.post<AuthResponse>(`${baseUrl}/auth/login`,
-      { email, password }).pipe(tap(resp => {
-        this._token.set(resp.token);
-        this._user.set(resp.user);
-        this._authStatus.set('authenticated');
-
-        localStorage.setItem('token', resp.token);
-      }), map(() => true),
-      catchError(() => {
-        this._token.set(null);
-        this._user.set(null);
-        this._authStatus.set('not-authenticated');
-        return of(false);
-      })
-    );
+      { email, password }).pipe(
+        map(resp => this.handleAuthSuccess(resp)),
+        catchError((error) => {
+          this.handleAuthError();
+          return of(false);
+        })
+      );
   }
 
   checkStatus():Observable<boolean> {
     const token = localStorage.getItem('token');
     if(!token) {
+      this.logout();
       return of(false);
     }
 
@@ -61,20 +55,34 @@ export class AuthService {
         'Authorization': `Bearer ${token}`,
       }
     }).pipe(
-      tap((resp) => {
-        this._token.set(resp.token);
-        this._user.set(resp.user);
-        this._authStatus.set('authenticated');
+        map(resp => this.handleAuthSuccess(resp)),
+        catchError((error) => {
+          this.handleAuthError();
+          return of(false);
+        })
+      );
+  }
 
-        localStorage.setItem('token', resp.token);
-      }),
-      map(() => true),
-      catchError(() => {
-        this._authStatus.set('not-authenticated');
-        this._token.set(null);
-        this._user.set(null);
-        return of(false);
-      })
-    );
+  logout() {
+    this._token.set(null);
+    this._user.set(null);
+    this._authStatus.set('not-authenticated');
+
+    localStorage.removeItem('token');
+  }
+
+  private handleAuthSuccess(resp: AuthResponse) {
+    this._token.set(resp.token);
+    this._user.set(resp.user);
+    this._authStatus.set('authenticated');
+
+    localStorage.setItem('token', resp.token);
+
+    return(true);
+  }
+
+  private handleAuthError() {
+    this.logout();
+    return of(false);
   }
 }
