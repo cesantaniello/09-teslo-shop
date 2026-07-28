@@ -11,9 +11,9 @@ const baseUrl = environment.baseUrl;
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private _token = signal<string | null>(null);
-  private _user = signal<User | null>(null);
   private _authStatus = signal<AuthStatus>('checking');
+  private _user = signal<User | null>(null);
+  private _token = signal<string | null>(localStorage.getItem('token'));
 
   private http = inject(HttpClient);
 
