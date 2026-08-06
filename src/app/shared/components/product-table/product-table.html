@@ -33,7 +33,7 @@
                   </div>
                 </div>
                 <div>
-                  <a [routerLink]="['admin/products', product.id]" 
+                  <a [routerLink]="['/admin/products', product.id]"
                     class="font-bold hover:text-accent transition-colors duration-300">
                     {{ product.title }}
                   </a>
@@ -48,7 +48,8 @@
             </td>
             <td>Purple</td>
             <th>
-              <button class="btn btn-ghost btn-xs">Detalles</button>
+              <a [routerLink]="['/admin/products', product.id]"
+                class="btn btn-ghost btn-xs">Detalles</a>
             </th>
           </tr>
         }
