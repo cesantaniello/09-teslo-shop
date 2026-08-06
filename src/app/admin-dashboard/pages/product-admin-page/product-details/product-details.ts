@@ -30,11 +30,23 @@ export class ProductDetails implements OnInit {
   ngOnInit(): void {
     this.setFormValue(this.product());
   }
-  
+
   setFormValue(formLike: Partial<Product>) {
     this.productForm.patchValue({tags: formLike.tags?.join(',')});
     this.productForm.patchValue(formLike as any);
     //this.productForm.patchValue(this.product() as any);
+  }
+
+  onSizeClicked(size: string) {
+    const currentSizes = this.productForm.value.sizes ?? [];
+
+    if(currentSizes.includes(size)) {
+      currentSizes.splice(currentSizes.indexOf(size), 1);
+    } else {
+      currentSizes.push(size);
+    }
+
+    this.productForm.patchValue({sizes: currentSizes});
   }
 
   onSubmit() {
