@@ -4,10 +4,11 @@ import { firstValueFrom } from 'rxjs';
 import { ProductsService } from '../../../products/services/products.service';
 import { PaginationService } from '../../../shared/components/pagination/pagination/pagination.service';
 import { Pagination } from "../../../shared/components/pagination/pagination/pagination";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-products-admin-page',
-  imports: [ProductTable, Pagination],
+  imports: [ProductTable, Pagination, RouterLink],
   templateUrl: './products-admin-page.html',
 })
 export class ProductsAdminPage {
@@ -17,8 +18,8 @@ export class ProductsAdminPage {
   productsPerPage = signal(10);
 
   productsResource = resource({
-    params: () => ({ 
-      page: this.paginationService.currentPage(), 
+    params: () => ({
+      page: this.paginationService.currentPage(),
       limit: this.productsPerPage() }),
     loader: ({ params }) =>
       firstValueFrom(

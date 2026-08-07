@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../../utils/form-utils';
 import { FormErrorLabel } from "../../../../shared/components/form-error-label/form-error-label";
 import { ProductsService } from '../../../../products/services/products.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'product-details',
@@ -13,8 +14,9 @@ import { ProductsService } from '../../../../products/services/products.service'
 })
 export class ProductDetails implements OnInit {
   product = input.required<Product>();
-  productsService = inject(ProductsService);
+  router = inject(Router);
   fb = inject(FormBuilder);
+  productsService = inject(ProductsService);
 
   productForm = this.fb.group({
     title: ['', Validators.required],
@@ -68,10 +70,18 @@ export class ProductDetails implements OnInit {
         .map((tag: string) => tag.trim()) ?? [],
     }
 
-    this.productsService.updateProduct(this.product().id, productLike).subscribe(
-      producto => {
-        console.log('Producto actualizado', producto);
-      }
-    )
+    if (this.product().id === 'new') {
+      this.productsService.createProduct(productLike).subscribe(
+        producto => {
+          this.router.navigate(['/admin/products', producto.id]);
+        }
+      )
+    }else {
+      this.productsService.updateProduct(this.product().id, productLike).subscribe(
+        producto => {
+          console.log('Producto actualizado', producto);
+        }
+      )
+    }
   }
 }
