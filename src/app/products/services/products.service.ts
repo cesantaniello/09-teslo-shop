@@ -51,7 +51,7 @@ export class ProductsService {
     );
   }
 
-    getProductById(id: string): Observable<Product>{
+  getProductById(id: string): Observable<Product>{
     if (this.productCache.has(id)) {
       return of(this.productCache.get(id)!);
     }
@@ -62,7 +62,7 @@ export class ProductsService {
     );
   }
 
-  updateProduct(productLike: Partial<Product>){
-    console.log('Actualizando producto');
+  updateProduct(id:string, productLike: Partial<Product>): Observable<Product> {
+    return this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike)
   }
 }
