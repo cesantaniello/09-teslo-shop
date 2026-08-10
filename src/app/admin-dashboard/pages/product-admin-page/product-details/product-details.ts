@@ -1,9 +1,9 @@
 import { Component, inject, input, OnInit, signal, type WritableSignal } from '@angular/core';
 import { Product } from '../../../../products/interfaces/product.interface';
-import { ProductCarousel } from "../../../../store-front/components/product-carousel/product-carousel";
+import { ProductCarousel } from '../../../../store-front/components/product-carousel/product-carousel';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../../utils/form-utils';
-import { FormErrorLabel } from "../../../../shared/components/form-error-label/form-error-label";
+import { FormErrorLabel } from '../../../../shared/components/form-error-label/form-error-label';
 import { ProductsService } from '../../../../products/services/products.service';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -44,7 +44,7 @@ export class ProductDetails implements OnInit {
   }
 
   setFormValue(formLike: Partial<Product>) {
-    this.productForm.patchValue({tags: formLike.tags?.join(',')});
+    this.productForm.patchValue({ tags: formLike.tags?.join(',') });
     this.productForm.patchValue(formLike as any);
     //this.productForm.patchValue(this.product() as any);
   }
@@ -52,38 +52,36 @@ export class ProductDetails implements OnInit {
   onSizeClicked(size: string) {
     const currentSizes = this.productForm.value.sizes ?? [];
 
-    if(currentSizes.includes(size)) {
+    if (currentSizes.includes(size)) {
       currentSizes.splice(currentSizes.indexOf(size), 1);
     } else {
       currentSizes.push(size);
     }
 
-    this.productForm.patchValue({sizes: currentSizes});
+    this.productForm.patchValue({ sizes: currentSizes });
   }
 
   async onSubmit() {
     const isValid = this.productForm.valid;
     this.productForm.markAllAsTouched();
 
-    if(!isValid) return;
+    if (!isValid) return;
     const formValue = this.productForm.value;
 
     const productLike: Partial<Product> = {
-      ... (formValue as any),
+      ...(formValue as any),
       tags:
         formValue.tags
-        ?.toLowerCase()
-        .split(',')
-        .map((tag: string) => tag.trim()) ?? [],
-    }
+          ?.toLowerCase()
+          .split(',')
+          .map((tag: string) => tag.trim()) ?? [],
+    };
 
     if (this.product().id === 'new') {
       const product = await firstValueFrom(this.productsService.createProduct(productLike));
       this.router.navigate(['/admin/products', product.id]);
-    }else {
-      await firstValueFrom(
-        this.productsService.updateProduct(this.product().id, productLike)
-      )
+    } else {
+      await firstValueFrom(this.productsService.updateProduct(this.product().id, productLike));
     }
 
     this.wasSaved.set(true);
@@ -96,7 +94,7 @@ export class ProductDetails implements OnInit {
     const fileList = (event.target as HTMLInputElement).files;
     this.imageFileList = fileList ?? undefined;
 
-    const imageUrls = Array.from(fileList ?? []).map(file => URL.createObjectURL(file));
+    const imageUrls = Array.from(fileList ?? []).map((file) => URL.createObjectURL(file));
     this.tempImages.set(imageUrls);
   }
 }
