@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal, type WritableSignal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal, type WritableSignal } from '@angular/core';
 import { Product } from '../../../../products/interfaces/product.interface';
 import { ProductCarousel } from '../../../../store-front/components/product-carousel/product-carousel';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -24,6 +24,12 @@ export class ProductDetails implements OnInit {
 
   imageFileList: FileList | undefined = undefined;
   tempImages: WritableSignal<string[]> = signal<string[]>([]);
+
+  imagesToCarousel = computed(() => {
+    const currentProductImages = [... this.product().images, ...this.tempImages()];
+    return currentProductImages;
+  });
+
 
   productForm = this.fb.group({
     title: ['', Validators.required],
