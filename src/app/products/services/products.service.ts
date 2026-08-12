@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { delay, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Gender, Product, ProductsResponse } from '../interfaces/product.interface';
 import { environment } from '../../../environments/environment';
 import { User } from '../../auth/interfaces/user.interfaces';
@@ -29,10 +29,10 @@ const emptyProduct: Product = {
 
 @Injectable({providedIn: 'root'})
 export class ProductsService {
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  private productsCache = new Map<string, ProductsResponse>();
-  private productCache = new Map<string, Product>();
+  private readonly productsCache = new Map<string, ProductsResponse>();
+  private readonly productCache = new Map<string, Product>();
 
   getProducts(options: Options): Observable<ProductsResponse>{
     const { limit = 9, offset = 0, gender = ''} = options;
@@ -80,16 +80,25 @@ export class ProductsService {
     );
   }
 
-  updateProduct(id:string, productLike: Partial<Product>): Observable<Product> {
-    return this.http.patch<Product>(`${baseUrl}/products/${id}`, productLike)
-    .pipe(
-      tap((product) => {
-        this.updateProductCache(product);
-      }),
-    );
+  updateProduct(id:string, productLike: Partial<Product>, imageFileList?: FileList):
+    Observable<Product> {
+      const currentImages = productLike.images ?? [];
+
+      return this.uploadImages(imageFileList).pipe(
+        map((imageNames) => ({
+          ...productLike,
+          images: [...currentImages, ...imageNames],
+        })),
+        switchMap((updatedProductLike) =>
+          this.http.patch<Product>(`${baseUrl}/products/${id}`, updatedProductLike)
+        ),
+        tap((product) => {
+          this.updateProductCache(product);
+        }),
+      );
   }
 
-  createProduct(productLike: Partial<Product>): Observable<Product> {
+  createProduct(productLike: Partial<Product>, imageFileList?: FileList): Observable<Product> {
     return this.http.post<Product>(`${baseUrl}/products`, productLike)
     .pipe(
       tap((product) => {
